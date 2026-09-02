@@ -1,58 +1,64 @@
-const items = document.querySelectorAll(".item");
-const container = document.querySelector(".items");
+let item = document.querySelectorAll(".item");
+let container = document.querySelector(".items");
 
 let selectedItem = null;
 let offsetX = 0;
 let offsetY = 0;
 
-items.forEach(function(item) {
+item.forEach((cube) => {
 
-    item.addEventListener("mousedown", function(e) {
+  cube.addEventListener("mousedown", (e) => {
 
-        selectedItem = e.currentTarget;
+    selectedItem = cube;
 
-        const itemRect = selectedItem.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
+    let cubeRect = cube.getBoundingClientRect();
+    let containerRect = container.getBoundingClientRect();
 
-        offsetX = e.clientX - itemRect.left;
-        offsetY = e.clientY - itemRect.top;
+    offsetX = e.clientX - cubeRect.left;
+    offsetY = e.clientY - cubeRect.top;
 
-        selectedItem.style.position = "absolute";
+    cube.style.position = "absolute";
 
-        selectedItem.style.left =
-            (itemRect.left - containerRect.left) + "px";
+    let x = cubeRect.left - containerRect.left;
+    let y = cubeRect.top - containerRect.top;
 
-        selectedItem.style.top =
-            (itemRect.top - containerRect.top) + "px";
-    });
-
-});
-
-
-container.addEventListener("mousemove", function(e) {
-
-    if (selectedItem === null) {
-        return;
-    }
-
-    const containerRect = container.getBoundingClientRect();
-
-    let x = e.clientX - containerRect.left - offsetX;
-    let y = e.clientY - containerRect.top - offsetY;
-
-    const maxX = container.clientWidth - selectedItem.offsetWidth;
-    const maxY = container.clientHeight - selectedItem.offsetHeight;
+    let maxX = container.clientWidth - cube.offsetWidth;
+    let maxY = container.clientHeight - cube.offsetHeight;
 
     x = Math.max(0, Math.min(x, maxX));
     y = Math.max(0, Math.min(y, maxY));
 
-    selectedItem.style.left = x + "px";
-    selectedItem.style.top = y + "px";
+    cube.style.left = x + "px";
+    cube.style.top = y + "px";
+  });
+
 });
 
 
-document.addEventListener("mouseup", function() {
+container.addEventListener("mousemove", (e) => {
 
-    selectedItem = null;
+  if (selectedItem === null) {
+    return;
+  }
+
+  let containerRect = container.getBoundingClientRect();
+
+  let x = e.clientX - containerRect.left - offsetX;
+  let y = e.clientY - containerRect.top - offsetY;
+
+  let maxX = container.clientWidth - selectedItem.offsetWidth;
+  let maxY = container.clientHeight - selectedItem.offsetHeight;
+
+  x = Math.max(0, Math.min(x, maxX));
+  y = Math.max(0, Math.min(y, maxY));
+
+  selectedItem.style.left = x + "px";
+  selectedItem.style.top = y + "px";
+});
+
+
+document.addEventListener("mouseup", () => {
+
+  selectedItem = null;
 
 });
