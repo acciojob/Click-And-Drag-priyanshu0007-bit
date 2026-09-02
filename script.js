@@ -1,64 +1,81 @@
-let item = document.querySelectorAll(".item");
-let container = document.querySelector(".items");
+const container = document.querySelector(".items");
+const items = document.querySelectorAll(".item");
 
-let selectedItem = null;
-let offsetX = 0;
-let offsetY = 0;
+items.forEach(function(item) {
 
-item.forEach((cube) => {
+    item.addEventListener("mousedown", function(event) {
 
-  cube.addEventListener("mousedown", (e) => {
+        event.preventDefault();
 
-    selectedItem = cube;
+        const containerRect = container.getBoundingClientRect();
+        const itemRect = item.getBoundingClientRect();
 
-    let cubeRect = cube.getBoundingClientRect();
-    let containerRect = container.getBoundingClientRect();
+        let offsetX = event.clientX - itemRect.left;
+        let offsetY = event.clientY - itemRect.top;
 
-    offsetX = e.clientX - cubeRect.left;
-    offsetY = e.clientY - cubeRect.top;
+        item.style.position = "absolute";
+        item.style.zIndex = "10";
 
-    cube.style.position = "absolute";
+        function moveItem(event) {
 
-    let x = cubeRect.left - containerRect.left;
-    let y = cubeRect.top - containerRect.top;
+            let newLeft =
+                event.clientX - containerRect.left - offsetX;
 
-    let maxX = container.clientWidth - cube.offsetWidth;
-    let maxY = container.clientHeight - cube.offsetHeight;
+            let newTop =
+                event.clientY - containerRect.top - offsetY;
 
-    x = Math.max(0, Math.min(x, maxX));
-    y = Math.max(0, Math.min(y, maxY));
+            // Keep cube inside container
+            const maxLeft =
+                container.clientWidth - item.offsetWidth;
 
-    cube.style.left = x + "px";
-    cube.style.top = y + "px";
-  });
+            const maxTop =
+                container.clientHeight - item.offsetHeight;
 
-});
+            if (newLeft < 0) {
+                newLeft = 0;
+            }
 
+            if (newTop < 0) {
+                newTop = 0;
+            }
 
-container.addEventListener("mousemove", (e) => {
+            if (newLeft > maxLeft) {
+                newLeft = maxLeft;
+            }
 
-  if (selectedItem === null) {
-    return;
-  }
+            if (newTop > maxTop) {
+                newTop = maxTop;
+            }
 
-  let containerRect = container.getBoundingClientRect();
+            item.style.left = newLeft + "px";
+            item.style.top = newTop + "px";
+        }
 
-  let x = e.clientX - containerRect.left - offsetX;
-  let y = e.clientY - containerRect.top - offsetY;
+        function stopMoving() {
 
-  let maxX = container.clientWidth - selectedItem.offsetWidth;
-  let maxY = container.clientHeight - selectedItem.offsetHeight;
+            document.removeEventListener(
+                "mousemove",
+                moveItem
+            );
 
-  x = Math.max(0, Math.min(x, maxX));
-  y = Math.max(0, Math.min(y, maxY));
+            document.removeEventListener(
+                "mouseup",
+                stopMoving
+            );
 
-  selectedItem.style.left = x + "px";
-  selectedItem.style.top = y + "px";
-});
+            item.style.zIndex = "1";
+        }
 
+        document.addEventListener(
+            "mousemove",
+            moveItem
+        );
 
-document.addEventListener("mouseup", () => {
+        document.addEventListener(
+            "mouseup",
+            stopMoving
+        );
 
-  selectedItem = null;
+    });
 
 });
