@@ -1,64 +1,58 @@
-let items = document.querySelectorAll(".item");
-let container = document.querySelector(".items");
+const items = document.querySelectorAll(".item");
+const container = document.querySelector(".items");
 
 let selectedItem = null;
 let offsetX = 0;
 let offsetY = 0;
 
-items.forEach((item) => {
+items.forEach(function(item) {
 
-  item.addEventListener("mousedown", (e) => {
+    item.addEventListener("mousedown", function(e) {
 
-    selectedItem = item;
+        selectedItem = e.currentTarget;
 
-    let itemRect = item.getBoundingClientRect();
-    let containerRect = container.getBoundingClientRect();
+        const itemRect = selectedItem.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
 
-    offsetX = e.clientX - itemRect.left;
-    offsetY = e.clientY - itemRect.top;
+        offsetX = e.clientX - itemRect.left;
+        offsetY = e.clientY - itemRect.top;
 
-    item.style.position = "absolute";
+        selectedItem.style.position = "absolute";
 
-    let x = itemRect.left - containerRect.left;
-    let y = itemRect.top - containerRect.top;
+        selectedItem.style.left =
+            (itemRect.left - containerRect.left) + "px";
 
-    let maxX = container.clientWidth - item.offsetWidth;
-    let maxY = container.clientHeight - item.offsetHeight;
+        selectedItem.style.top =
+            (itemRect.top - containerRect.top) + "px";
+    });
+
+});
+
+
+container.addEventListener("mousemove", function(e) {
+
+    if (selectedItem === null) {
+        return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+
+    let x = e.clientX - containerRect.left - offsetX;
+    let y = e.clientY - containerRect.top - offsetY;
+
+    const maxX = container.clientWidth - selectedItem.offsetWidth;
+    const maxY = container.clientHeight - selectedItem.offsetHeight;
 
     x = Math.max(0, Math.min(x, maxX));
     y = Math.max(0, Math.min(y, maxY));
 
-    item.style.left = x + "px";
-    item.style.top = y + "px";
-  });
-
+    selectedItem.style.left = x + "px";
+    selectedItem.style.top = y + "px";
 });
 
 
-container.addEventListener("mousemove", (e) => {
+document.addEventListener("mouseup", function() {
 
-  if (selectedItem === null) {
-    return;
-  }
-
-  let containerRect = container.getBoundingClientRect();
-
-  let x = e.clientX - containerRect.left - offsetX;
-  let y = e.clientY - containerRect.top - offsetY;
-
-  let maxX = container.clientWidth - selectedItem.offsetWidth;
-  let maxY = container.clientHeight - selectedItem.offsetHeight;
-
-  x = Math.max(0, Math.min(x, maxX));
-  y = Math.max(0, Math.min(y, maxY));
-
-  selectedItem.style.left = x + "px";
-  selectedItem.style.top = y + "px";
-});
-
-
-document.addEventListener("mouseup", () => {
-
-  selectedItem = null;
+    selectedItem = null;
 
 });
